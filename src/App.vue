@@ -4,7 +4,10 @@
       v-if="settingsDialog"
       @accept="acceptSettings"
     />
-    <Game :settings="settings" />
+    <Game
+      v-else
+      :settings="settings"
+    />
   </div>
 </template>
 
