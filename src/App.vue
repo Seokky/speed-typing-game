@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <GameSettings
+    <GameSettingsDialog
       v-if="settingsDialog"
       @accept="acceptSettings"
     />
@@ -17,13 +17,13 @@ import Vue from 'vue';
 import { TSettings } from '@/types/Settings';
 
 import Game from '@/components/Game.vue';
-import GameSettings from '@/components/GameSettings.vue';
+import GameSettingsDialog from '@/components/GameSettingsDialog.vue';
 
 export default Vue.extend({
   name: 'App',
 
   components: {
-    Game, GameSettings,
+    Game, GameSettingsDialog,
   },
 
   data: () => ({

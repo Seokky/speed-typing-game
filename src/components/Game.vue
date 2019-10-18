@@ -1,9 +1,10 @@
 <template>
   <div :class="$style.wrapper">
-    <Score
+    <ScorePanel
       :hits="hitsCount"
       :mistakes="mistakesCount"
     />
+    <HistoryWidget :history-object="historyObject" />
 
     <canvas
       ref="game"
@@ -29,7 +30,9 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import Score from './Score.vue';
+
+import ScorePanel from './ScorePanel.vue';
+import HistoryWidget, { THistoryObject } from './HistoryWidget.vue';
 
 import { TSettings } from '@/types/Settings';
 
@@ -39,7 +42,7 @@ export default Vue.extend({
   name: 'Game',
 
   components: {
-    Score,
+    ScorePanel, HistoryWidget,
   },
 
   props: {
@@ -53,6 +56,10 @@ export default Vue.extend({
     currentLetter: null as string | null,
     hitsCount: 0,
     mistakesCount: 0,
+    historyObject: {
+      letter: 'A',
+      type: 'hit',
+    } as THistoryObject,
   }),
 
   mounted() {
@@ -83,13 +90,22 @@ export default Vue.extend({
     },
     onHit() {
       this.hitsCount += 1;
+
+      this.historyObject.letter = this.currentLetter!;
+      this.historyObject.type = 'hit';
+
       this.drawNewLetter();
     },
     onMistake() {
       this.mistakesCount += 1;
 
+      this.historyObject.letter = this.currentLetter!;
+      this.historyObject.type = 'mistake';
+
       if (this.settings.complexity === 'hardcore') {
         this.stopGame();
+      } else {
+        this.drawNewLetter();
       }
     },
     drawNewLetter() {
