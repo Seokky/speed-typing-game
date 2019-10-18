@@ -31,16 +31,12 @@
           />
           <select v-model="complexity">
             <option
-              :value="1"
-              v-text="'Easy'"
-            />
-            <option
-              :value="2"
+              value="normal"
               v-text="'Normal'"
             />
             <option
-              :value="3"
-              v-text="'Hard'"
+              value="hardcore"
+              v-text="'Hardcore'"
             />
           </select>
         </div>
@@ -66,7 +62,7 @@ import { TSettings } from '@/types/Settings';
 export default Vue.extend({
   data: () => ({
     language: 'en' as TLanguage,
-    complexity: 1 as TComplexity,
+    complexity: 'normal' as TComplexity,
   }),
 
   methods: {
@@ -85,7 +81,7 @@ export default Vue.extend({
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background: rgba(black, 0.4);
+  background: rgb(44, 31, 52);
   z-index: 100;
   display: flex;
   justify-content: center;

@@ -1,5 +1,10 @@
 <template>
   <div :class="$style.wrapper">
+    <Score
+      :hits="hitsCount"
+      :mistakes="mistakesCount"
+    />
+
     <canvas
       ref="game"
       width="1500"
@@ -24,6 +29,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import Score from './Score.vue';
 
 import { TSettings } from '@/types/Settings';
 
@@ -33,6 +39,10 @@ import { getLocaleLetters, getRandomLetter } from '@/constants/letters';
 export default Vue.extend({
   name: 'Game',
 
+  components: {
+    Score,
+  },
+
   props: {
     settings: { type: Object as PropType<TSettings>, required: true },
   },
@@ -41,14 +51,10 @@ export default Vue.extend({
     canvas: null as any,
     ctx: null as any,
     running: false,
-    currentLetter: null,
+    currentLetter: null as string | null,
+    hitsCount: 0,
+    mistakesCount: 0,
   }),
-
-  computed: {
-    letters(): string[] {
-      return getLocaleLetters(this.settings.language);
-    },
-  },
 
   mounted() {
     this.init();
@@ -71,7 +77,15 @@ export default Vue.extend({
     },
     onKeyDown(e: KeyboardEvent) {
       if (e.key === this.currentLetter) {
+        this.hitsCount += 1;
         this.drawLetter();
+        return;
+      }
+
+      this.mistakesCount += 1;
+
+      if (this.settings.complexity === 'hardcore') {
+        this.stopGame();
       }
     },
     drawLetter() {
@@ -79,7 +93,7 @@ export default Vue.extend({
 
       this.currentLetter = getRandomLetter(this.settings.language);
 
-      this.ctx.font = '60px Arial';
+      this.ctx.font = '80px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = getRandomColor();
       this.ctx.fillText(
