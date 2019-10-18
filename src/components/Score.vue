@@ -39,7 +39,7 @@ export default Vue.extend({
   position: fixed;
   top: 0;
   width: 100%;
-  height: 10vh;
+  height: 20vh;
   display: flex;
   justify-content: center;
   align-items: center;

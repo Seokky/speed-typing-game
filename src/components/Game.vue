@@ -33,7 +33,6 @@ import Score from './Score.vue';
 
 import { TSettings } from '@/types/Settings';
 
-import { getRandomColor } from '@/constants/colors';
 import { getLocaleLetters, getRandomLetter } from '@/constants/letters';
 
 export default Vue.extend({
@@ -64,11 +63,11 @@ export default Vue.extend({
     init() {
       this.canvas = this.$refs.game;
       this.ctx = this.canvas.getContext('2d');
-      this.drawLetter();
+      this.drawNewLetter();
     },
     startGame() {
       this.running = true;
-      this.drawLetter();
+      this.drawNewLetter();
       document.addEventListener('keydown', this.onKeyDown);
     },
     stopGame() {
@@ -77,25 +76,30 @@ export default Vue.extend({
     },
     onKeyDown(e: KeyboardEvent) {
       if (e.key === this.currentLetter) {
-        this.hitsCount += 1;
-        this.drawLetter();
-        return;
+        this.onHit();
+      } else {
+        this.onMistake();
       }
-
+    },
+    onHit() {
+      this.hitsCount += 1;
+      this.drawNewLetter();
+    },
+    onMistake() {
       this.mistakesCount += 1;
 
       if (this.settings.complexity === 'hardcore') {
         this.stopGame();
       }
     },
-    drawLetter() {
+    drawNewLetter() {
       this.clearCanvas();
 
       this.currentLetter = getRandomLetter(this.settings.language);
 
       this.ctx.font = '80px Arial';
       this.ctx.textAlign = 'center';
-      this.ctx.fillStyle = getRandomColor();
+      this.ctx.fillStyle = 'white';
       this.ctx.fillText(
         this.currentLetter,
         this.canvas.width / 2,
