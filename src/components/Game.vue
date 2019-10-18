@@ -8,9 +8,16 @@
     />
 
     <button
-      :class="$style['start-btn']"
+      v-if="!running"
+      :class="$style.btn"
       @click="startGame"
-      v-text="'Start!'"
+      v-text="'Start game'"
+    />
+    <button
+      v-else
+      :class="$style.btn"
+      @click="stopGame"
+      v-text="'Stop game'"
     />
   </div>
 </template>
@@ -33,6 +40,8 @@ export default Vue.extend({
   data: () => ({
     canvas: null as any,
     ctx: null as any,
+    running: false,
+    currentLetter: null,
   }),
 
   computed: {
@@ -43,27 +52,44 @@ export default Vue.extend({
 
   mounted() {
     this.init();
-    this.drawLetterBox();
   },
 
   methods: {
     init() {
       this.canvas = this.$refs.game;
       this.ctx = this.canvas.getContext('2d');
+      this.drawLetter();
     },
     startGame() {
-
+      this.running = true;
+      this.drawLetter();
+      document.addEventListener('keydown', this.onKeyDown);
     },
-    drawLetterBox() {
-      const letter = getRandomLetter(this.settings.language);
+    stopGame() {
+      this.running = false;
+      document.removeEventListener('keydown', this.onKeyDown);
+    },
+    onKeyDown(e: KeyboardEvent) {
+      if (e.key === this.currentLetter) {
+        this.drawLetter();
+      }
+    },
+    drawLetter() {
+      this.clearCanvas();
+
+      this.currentLetter = getRandomLetter(this.settings.language);
+
       this.ctx.font = '60px Arial';
       this.ctx.textAlign = 'center';
       this.ctx.fillStyle = getRandomColor();
       this.ctx.fillText(
-        letter,
+        this.currentLetter,
         this.canvas.width / 2,
         this.canvas.height / 2,
       );
+    },
+    clearCanvas() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
   },
 });
@@ -82,7 +108,7 @@ export default Vue.extend({
   height: 100%;
 }
 
-.start-btn {
+.btn {
   cursor: pointer;
   display: block;
   margin: 0 auto;
@@ -90,13 +116,13 @@ export default Vue.extend({
   bottom: 10vh;
   left: 0;
   right: 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   padding: 0.5rem 2rem;
   border: none;
   border-radius: 5px;
 }
 
-.start-btn:hover {
+.btn:hover {
   transform: scale(0.985);
 }
 </style>
